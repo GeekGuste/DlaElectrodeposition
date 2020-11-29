@@ -1,0 +1,50 @@
+package io
+
+import java.util.concurrent.ConcurrentHashMap
+import java.util.UUID
+import java.util.ArrayList
+
+class Population{
+	var age: int = 1
+	public var particles : ArrayList<Particle>
+	var worldMap: int[][]
+	var dimensions: Particle
+	
+	new(dimensions: Particle){
+		this.dimensions = dimensions
+		this.particles = new ArrayList<Particle>()
+		for (i : 1..Setting::NUMBER_OF_PARTICLES){
+			val coordX = (Math.random() * dimensions.coordX) as int
+			val coordY = (Math.random() * dimensions.coordY) as int
+			this.particles.add(new Particle(coordX, coordY))
+		}
+		// initialisation de toutes les valeurs du tableau à 0
+		worldMap = newIntArrayOfSize(this.dimensions.coordX, this.dimensions.coordY)
+		//Recupération du centre
+		val x = this.dimensions.coordX/2
+		val y = this.dimensions.coordY/2
+		worldMap.set(x, y, age)
+		//age = 2
+		age++
+	}
+	
+	def hasDendriteNeighbour(particle: Particle){
+        if(worldMap.get(this.dimensions.coordX).get(this.dimensions.coordY)==0){
+            var neighbours: Particle[] = particle.getNeighbours(this.dimensions) 
+            for(neighbour:neighbours){
+               if(worldMap.get(neighbour.coordX).get(neighbour.coordY)>0){ //le voisin fait partie de l'amas
+                   worldMap.set(neighbour.coordX, neighbour.coordY, age);// age prend la valeur >1
+                   age++;
+                   return true;
+               }
+            }
+            return false;
+        } else {
+           return true;
+        }
+    }
+	
+	def getAgeForPixel(x: int, y: int): int {
+		return worldMap.get(x).get(y)
+	}
+}

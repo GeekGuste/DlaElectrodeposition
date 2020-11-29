@@ -1,0 +1,12 @@
+package io
+
+event Die
+
+event GuiRepaint {
+	val particle: Particle
+
+	new (particule : Particle) {
+		particle = particule
+	}
+
+}

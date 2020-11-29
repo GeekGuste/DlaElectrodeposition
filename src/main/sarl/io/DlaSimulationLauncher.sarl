@@ -1,0 +1,9 @@
+package io
+
+class DlaSimulationLauncher {
+
+	static def main(args : String*) {
+		var dlaS = new DlaSimulation()
+		 dlaS.start()
+	}
+}

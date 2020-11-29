@@ -1,0 +1,56 @@
+package io.gui
+
+import javax.swing.JComponent
+import java.util.concurrent.ConcurrentHashMap
+import java.util.UUID
+import io.Particle
+import java.awt.Graphics
+import java.awt.Color
+import io.Population
+import io.Setting
+
+class WorldCanvas extends JComponent {
+	public var population: Population
+	public var dimensions : Particle
+	val PARTICLE_COLOR = Color.BLUE
+	
+	new(dim: Particle, population: Population){
+		this.population = population
+		this.dimensions = dim
+		setSize(this.dimensions.coordX, this.dimensions.coordY)
+	}
+	
+	def paint(g : Graphics) : void {
+		super.paintComponent(g)
+		var width: int = this.dimensions.coordX
+		var height: int = this.dimensions.coordY
+		g.color = Setting::INITIAL_COLOR
+		g.fillRect(0, 0, width, height)
+		g.color = Setting::AMA_FIRST_COLOR
+
+		for (e : population.particles) {
+			g.drawLine(e.coordX, e.coordY, e.coordX, e.coordY)
+		}
+		
+		for (i : 1 .. this.dimensions.coordX)
+		{
+			for(j: 1 .. this.dimensions.coordY){
+				val age: int = this.population.getAgeForPixel(i, j)
+				if(age> 0){
+					//Coloration des particles en fonction de leur position/moment de positionnement
+					if(age < 200){
+						g.color = Setting::AMA_FIRST_COLOR
+					}
+					else{
+						g.color =Setting::AMA_SECOND_COLOR
+					}
+					g.drawLine(i, j, i, j)
+				}
+			}			
+		}
+	}
+	
+	def update(g: Graphics){
+		paint(g)
+	}
+}

@@ -1,0 +1,81 @@
+package io
+
+import java.util.UUID
+import io.sarl.bootstrap.SREBootstrap
+import io.sarl.lang.core.AgentContext
+import io.sarl.lang.core.EventListener
+import io.sarl.lang.core.Event
+import io.sarl.core.OpenEventSpace
+import gui.EnvironmentUi
+import io.sarl.bootstrap.SRE
+import java.util.concurrent.ConcurrentHashMap
+
+class DlaSimulation implements EventListener {
+
+	public static val id = UUID::randomUUID
+
+	var kernel : SREBootstrap
+
+	var defaultSARLContext : AgentContext
+	
+	var population : Population
+	
+	var group : ConcurrentHashMap<UUID, Particle>
+
+	var ^space : OpenEventSpace
+	
+	val dimensions: Particle
+
+	var myGUI : EnvironmentUi
+
+	new {
+		val scale = 2;
+		val width = scale * 320
+		val height = scale * 234
+		dimensions = new Particle(width, height)
+		this.population = new Population(dimensions)
+	}
+
+	def start : void {
+		kernel = SRE::getBootstrap
+		defaultSARLContext = kernel.startWithoutAgent
+		
+		^space = defaultSARLContext.defaultSpace as OpenEventSpace
+		
+		// Chargement des particules
+		group = new ConcurrentHashMap<UUID, Particle>
+		//Notre interface utilisateur
+		this.myGUI = new EnvironmentUi(this.dimensions, ^space, this.population)
+		for (p : population.particles) {
+			val uuid = UUID.randomUUID
+			kernel.startAgentWithID(typeof(ParticleAgent), uuid, p)
+			p.owner = uuid
+			this.group.put(uuid, p)
+		}
+
+
+		// Registering to receive GUIRepaint events
+		^space.register(this)
+		// Sending start to Environment
+		//^space.emit(id, new Start(this.boidBodies))
+	}
+	
+	override receiveEvent(^event : Event) {
+		if (^event instanceof GuiRepaint) { // event from the environment, GUI must be refreshed
+			var particle = ^event.particle
+			for (p : this.population.particles){
+				if (p.owner == particle.owner){
+					p.coordX = particle.coordX
+					p.coordY = particle.coordY
+				}
+			}
+			this.myGUI.population = population 
+			this.myGUI.repaint
+		}
+	}
+	
+	def getID : UUID {
+		return id
+	}
+	
+}

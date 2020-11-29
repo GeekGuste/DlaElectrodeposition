@@ -1,0 +1,12 @@
+package io
+
+import java.awt.Color
+
+class Setting{
+	public static val TITLE = "Diffused Limited Aggregation(Electrodéposition)"
+	public static val INITIAL_COLOR = Color.BLUE
+	public static val AMA_FIRST_COLOR = Color.RED
+	public static val AMA_SECOND_COLOR = Color.YELLOW
+	public static var THREAD_SLEEP_TIME = 50
+	public static var NUMBER_OF_PARTICLES = 30000
+}

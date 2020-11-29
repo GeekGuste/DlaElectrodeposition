@@ -1,0 +1,40 @@
+package io
+
+import java.util.UUID
+
+class Particle{
+	public var coordX: int = 0
+	public var coordY: int = 0
+	public var owner : UUID
+
+	new (x : int, y : int, ow: UUID) {
+		coordX = x
+		coordY = y
+		owner = ow
+	}
+	
+	new (x: int, y: int){
+		coordX = x
+		coordY = y
+	}
+	
+	def getNeighbours(dim: Particle) : Particle[] {
+		var neighbours = newArrayOfSize(9)
+		var maxX = dim.coordX
+		var maxY = dim.coordY
+		neighbours.set(0,new Particle((this.coordX + maxX - 1) % maxX, (this.coordY + maxY - 1) % maxY))
+		neighbours.set(1, new Particle((this.coordX + maxX - 1) % maxX, this.coordY))
+		neighbours.set(2,new Particle((this.coordX + maxX - 1) % maxX, (this.coordY + maxY + 1) % maxY))
+		neighbours.set(3,new Particle(this.coordX, (this.coordY + maxY - 1) % maxY))
+		// le centre
+		neighbours.set(4, new Particle(this.coordX, this.coordY))
+		neighbours.set(5, new Particle(this.coordX, (this.coordY + maxY + 1) % maxY))
+		neighbours.set(6, new Particle((this.coordX + maxX + 1) % maxX, (this.coordY + maxY - 1) % maxY))
+		neighbours.set(7, new Particle((this.coordX + maxX + 1) % maxX, this.coordY))
+		neighbours.set(8, new Particle((this.coordX + maxX + 1) % maxX, (this.coordY + maxY+1) % maxY))
+		
+		return neighbours
+	}
+	
+	
+}

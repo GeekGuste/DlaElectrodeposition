@@ -1,0 +1,27 @@
+package io.gui
+
+import javax.swing.JApplet
+import java.awt.image.ImageObserver
+import java.awt.MenuContainer
+import java.io.Serializable
+import javax.accessibility.Accessible
+import java.awt.Label
+import io.Setting
+import io.Population
+import java.awt.BorderLayout
+import io.Particle
+
+class EnvironmentApplet extends JApplet implements ImageObserver, MenuContainer, Serializable, Accessible {
+	var title: Label = new Label(Setting::TITLE)
+	public var canvas: WorldCanvas
+	public var population: Population
+	
+	new(dimensions: Particle, population: Population){
+		this.layout = new BorderLayout()
+		this.add(title, BorderLayout.NORTH)
+		this.population = population
+		canvas = new WorldCanvas(dimensions, population)
+		this.add(canvas, BorderLayout.CENTER)
+	}
+	
+}
