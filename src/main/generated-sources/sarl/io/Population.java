@@ -1,12 +1,11 @@
 package io;
 
-import io.Particle;
-import io.Setting;
+import io.ParticleBody;
 import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
-import java.util.ArrayList;
-import org.eclipse.xtext.xbase.lib.IntegerRange;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 @SarlSpecification("0.11")
@@ -15,27 +14,14 @@ import org.eclipse.xtext.xbase.lib.Pure;
 public class Population {
   private int age = 1;
   
-  public ArrayList<Particle> particles;
+  public ConcurrentHashMap<UUID, ParticleBody> particles;
   
   private int[][] worldMap;
   
-  private Particle dimensions;
+  private ParticleBody dimensions;
   
-  public Population(final Particle dimensions) {
+  public Population(final ParticleBody dimensions) {
     this.dimensions = dimensions;
-    ArrayList<Particle> _arrayList = new ArrayList<Particle>();
-    this.particles = _arrayList;
-    IntegerRange _upTo = new IntegerRange(1, Setting.NUMBER_OF_PARTICLES);
-    for (final Integer i : _upTo) {
-      {
-        double _random = Math.random();
-        final int coordX = ((int) (_random * dimensions.coordX));
-        double _random_1 = Math.random();
-        final int coordY = ((int) (_random_1 * dimensions.coordY));
-        Particle _particle = new Particle(coordX, coordY);
-        this.particles.add(_particle);
-      }
-    }
     this.worldMap = new int[this.dimensions.coordX][this.dimensions.coordY];
     final int x = (this.dimensions.coordX / 2);
     final int y = (this.dimensions.coordY / 2);
@@ -44,22 +30,9 @@ public class Population {
   }
   
   @Pure
-  public boolean hasDendriteNeighbour(final Particle particle) {
-    int _get = this.worldMap[this.dimensions.coordX][this.dimensions.coordY];
-    if ((_get == 0)) {
-      Particle[] neighbours = particle.getNeighbours(this.dimensions);
-      for (final Particle neighbour : neighbours) {
-        int _get_1 = this.worldMap[neighbour.coordX][neighbour.coordY];
-        if ((_get_1 > 0)) {
-          this.worldMap[neighbour.coordX][neighbour.coordY] = this.age;
-          this.age++;
-          return true;
-        }
-      }
-      return false;
-    } else {
-      return true;
-    }
+  public boolean hasDendriteNeighbour(final ParticleBody particle) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method getNeighbours(ParticleBody) is undefined for the type ParticleBody");
   }
   
   @Pure

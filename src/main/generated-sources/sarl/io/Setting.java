@@ -11,7 +11,7 @@ import java.awt.Color;
 public class Setting {
   public static final String TITLE = "Diffused Limited Aggregation(Electrodéposition)";
   
-  public static final Color INITIAL_COLOR = Color.BLUE;
+  public static final Color INITIAL_COLOR = Color.WHITE;
   
   public static final Color AMA_FIRST_COLOR = Color.RED;
   
@@ -19,7 +19,7 @@ public class Setting {
   
   public static int THREAD_SLEEP_TIME = 50;
   
-  public static int NUMBER_OF_PARTICLES = 30000;
+  public static int NUMBER_OF_PARTICLES = 300;
   
   @SyntheticMember
   public Setting() {

@@ -9,18 +9,19 @@ import java.awt.Label
 import io.Setting
 import io.Population
 import java.awt.BorderLayout
-import io.Particle
+import io.ParticleBody
+import java.util.concurrent.ConcurrentHashMap
 
 class EnvironmentApplet extends JApplet implements ImageObserver, MenuContainer, Serializable, Accessible {
 	var title: Label = new Label(Setting::TITLE)
 	public var canvas: WorldCanvas
-	public var population: Population
+	public var group : ConcurrentHashMap
 	
-	new(dimensions: Particle, population: Population){
+	new(dimensions : ParticleBody, group : ConcurrentHashMap) {
 		this.layout = new BorderLayout()
 		this.add(title, BorderLayout.NORTH)
-		this.population = population
-		canvas = new WorldCanvas(dimensions, population)
+		this.group = group
+		canvas = new WorldCanvas(dimensions, group)
 		this.add(canvas, BorderLayout.CENTER)
 	}
 	

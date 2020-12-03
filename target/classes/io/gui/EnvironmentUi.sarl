@@ -1,99 +1,38 @@
 package gui
 
-import javax.swing.JFrame
-import java.awt.image.ImageObserver
-import java.awt.MenuContainer
+import io.Population
+import io.Setting
+import io.gui.EnvironmentApplet
+import io.sarl.core.OpenEventSpace
 import java.io.Serializable
 import javax.accessibility.Accessible
-import java.awt.^event.WindowListener
-import java.awt.^event.WindowEvent
-import io.gui.EnvironmentApplet
-import io.Setting
-import java.awt.^event.WindowAdapter
-import java.awt.Frame
-import io.sarl.core.OpenEventSpace
-import java.util.UUID
-import io.Die
-import java.awt.Graphics
-import io.Particle
-import java.util.Map
-import io.Population
+import javax.swing.JFrame
+import io.ParticleBody
+import java.util.concurrent.ConcurrentHashMap
 
-class EnvironmentUi extends JFrame implements ImageObserver, MenuContainer, Serializable, Accessible, WindowListener{
+class EnvironmentUi extends JFrame implements Serializable, Accessible{
 	
 	var applet : EnvironmentApplet
-	var handler : Closer
-	public var population: Population
+	//var handler : Closer
+	public var group: ConcurrentHashMap
 	
-	new(dimensions : Particle, comspace : OpenEventSpace, population : Population) {
+	new(dimensions : ParticleBody, comspace : OpenEventSpace, group : ConcurrentHashMap) {
 		super(Setting::TITLE)
-		handler = new Closer(this, comspace)
-		applet = new EnvironmentApplet(dimensions, population)
-		this.population = population
+		//handler = new Closer(this, comspace)
+		applet = new EnvironmentApplet(dimensions, group)
+		this.group = group
 		applet.init()
 		add("Center", applet)
 		this.setBounds(100, 100, applet.canvas.dimensions.coordX, applet.canvas.dimensions.coordY + 30)
-		pack()
+		//pack()
 		setVisible(true)
 		//toFront()
-		addWindowListener(this)
+		//addWindowListener(this)
 	}
 	
-	def windowOpened(arg0 : WindowEvent) {
-		setBounds(100, 100, applet.canvas.dimensions.coordX, applet.canvas.dimensions.coordY + 30)
-		setVisible(true)
-		//toFront()
-	}
-	
-	def windowClosed(arg0 : WindowEvent) {
-		System.exit(0)
-	}
-	
-	def windowClosing(arg0 : WindowEvent) {
-		System.exit(0)
-	}
-	
-	def windowDeactivated(arg0 : WindowEvent) {
-		
-	}
-	
-	def windowDeiconified(arg0 : WindowEvent) {
-		setBounds(100, 100, applet.canvas.dimensions.coordX, applet.canvas.dimensions.coordY + 30)
-		setVisible(true)
-		//toFront()
-	}
 
-	def windowActivated(arg0 : WindowEvent) {
-        //toFront();
-	}
 	
-	def windowIconified(arg0 : WindowEvent) {
-		
-	}
 
-	override paint(g : Graphics) {
-		super.paint(g)
-		this.applet.population = population
-		this.applet.repaint()
-	}
 
 }
-	
-package class Closer extends WindowAdapter {
-	var ^space : OpenEventSpace
-	var iframe : JFrame
 
-	new(parent : JFrame, comspace : OpenEventSpace) {
-		^space = comspace
-		iframe = parent
-	}
-
-	/** 
-	 * Clean the simulation asking the agents to die before disposing the window
-	 */
-	override windowClosing(^event : WindowEvent) {
-		^space.emit(UUID.randomUUID, new Die)
-		iframe.dispose();		
-	}
-	
-}

@@ -1,7 +1,6 @@
 package io.gui;
 
-import io.Particle;
-import io.Population;
+import io.ParticleBody;
 import io.Setting;
 import io.gui.WorldCanvas;
 import io.sarl.lang.annotation.SarlElementType;
@@ -12,6 +11,7 @@ import java.awt.Label;
 import java.awt.MenuContainer;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.accessibility.Accessible;
 import javax.swing.JApplet;
 import org.eclipse.xtext.xbase.lib.Pure;
@@ -24,14 +24,14 @@ public class EnvironmentApplet extends JApplet implements ImageObserver, MenuCon
   
   public WorldCanvas canvas;
   
-  public Population population;
+  public ConcurrentHashMap group;
   
-  public EnvironmentApplet(final Particle dimensions, final Population population) {
+  public EnvironmentApplet(final ParticleBody dimensions, final ConcurrentHashMap group) {
     BorderLayout _borderLayout = new BorderLayout();
     this.setLayout(_borderLayout);
     this.add(this.title, BorderLayout.NORTH);
-    this.population = population;
-    WorldCanvas _worldCanvas = new WorldCanvas(dimensions, population);
+    this.group = group;
+    WorldCanvas _worldCanvas = new WorldCanvas(dimensions, group);
     this.canvas = _worldCanvas;
     this.add(this.canvas, BorderLayout.CENTER);
   }
@@ -52,5 +52,5 @@ public class EnvironmentApplet extends JApplet implements ImageObserver, MenuCon
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -6448922872L;
+  private static final long serialVersionUID = -2782309924L;
 }
