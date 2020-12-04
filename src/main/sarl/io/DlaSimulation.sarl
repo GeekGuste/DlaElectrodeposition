@@ -20,11 +20,11 @@ class DlaSimulation implements EventListener {
 	
 	var population : Population
 	
-	var group : ConcurrentHashMap<UUID, Particle>
+	var group : ConcurrentHashMap<UUID, ParticleBody>
 
 	var ^space : OpenEventSpace
 	
-	val dimensions: Particle
+	val dimensions: ParticleBody
 
 	var myGUI : EnvironmentUi
 
@@ -32,7 +32,7 @@ class DlaSimulation implements EventListener {
 		val scale = 2;
 		val width = scale * 320
 		val height = scale * 234
-		dimensions = new Particle(width, height)
+		dimensions = new ParticleBody(width, height)
 		this.population = new Population(dimensions)
 	}
 
@@ -43,15 +43,25 @@ class DlaSimulation implements EventListener {
 		^space = defaultSARLContext.defaultSpace as OpenEventSpace
 		
 		// Chargement des particules
-		group = new ConcurrentHashMap<UUID, Particle>
-		//Notre interface utilisateur
-		this.myGUI = new EnvironmentUi(this.dimensions, ^space, this.population)
-		for (p : population.particles) {
+		group = new ConcurrentHashMap<UUID, ParticleBody>
+		// population.particles = new ConcurrentHashMap
+		var centre = new ParticleBody(dimensions.coordX / 2, dimensions.coordY / 2)
+		centre.mouvement = false
+		centre.PARTICLE_COLOR = Setting::AMA_FIRST_COLOR
+		this.group.put(UUID.randomUUID, centre)
+		for (i : 1 .. Setting::NUMBER_OF_PARTICLES) {
+			val coordX = (Math.random() * dimensions.coordX) as int
+			val coordY = (Math.random() * dimensions.coordY) as int
 			val uuid = UUID.randomUUID
+			var p = new ParticleBody(coordX, coordY)
 			kernel.startAgentWithID(typeof(ParticleAgent), uuid, p)
 			p.owner = uuid
 			this.group.put(uuid, p)
+			System.out.println( "Agent " + i)
 		}
+
+		//Notre interface utilisateur
+		this.myGUI = new EnvironmentUi(this.dimensions, ^space, this.group)
 
 
 		// Registering to receive GUIRepaint events
@@ -62,14 +72,7 @@ class DlaSimulation implements EventListener {
 	
 	override receiveEvent(^event : Event) {
 		if (^event instanceof GuiRepaint) { // event from the environment, GUI must be refreshed
-			var particle = ^event.particle
-			for (p : this.population.particles){
-				if (p.owner == particle.owner){
-					p.coordX = particle.coordX
-					p.coordY = particle.coordY
-				}
-			}
-			this.myGUI.population = population 
+			this.myGUI.group = group 
 			this.myGUI.repaint
 		}
 	}

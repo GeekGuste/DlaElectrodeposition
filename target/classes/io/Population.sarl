@@ -6,18 +6,12 @@ import java.util.ArrayList
 
 class Population{
 	var age: int = 1
-	public var particles : ArrayList<Particle>
+	public var particles : ConcurrentHashMap<UUID, ParticleBody>
 	var worldMap: int[][]
-	var dimensions: Particle
+	var dimensions: ParticleBody
 	
-	new(dimensions: Particle){
+	new(dimensions: ParticleBody){
 		this.dimensions = dimensions
-		this.particles = new ArrayList<Particle>()
-		for (i : 1..Setting::NUMBER_OF_PARTICLES){
-			val coordX = (Math.random() * dimensions.coordX) as int
-			val coordY = (Math.random() * dimensions.coordY) as int
-			this.particles.add(new Particle(coordX, coordY))
-		}
 		// initialisation de toutes les valeurs du tableau à 0
 		worldMap = newIntArrayOfSize(this.dimensions.coordX, this.dimensions.coordY)
 		//Recupération du centre
@@ -28,9 +22,9 @@ class Population{
 		age++
 	}
 	
-	def hasDendriteNeighbour(particle: Particle){
+	def hasDendriteNeighbour(particle: ParticleBody){
         if(worldMap.get(this.dimensions.coordX).get(this.dimensions.coordY)==0){
-            var neighbours: Particle[] = particle.getNeighbours(this.dimensions) 
+            var neighbours: ParticleBody[] = particle.getNeighbours(this.dimensions) 
             for(neighbour:neighbours){
                if(worldMap.get(neighbour.coordX).get(neighbour.coordY)>0){ //le voisin fait partie de l'amas
                    worldMap.set(neighbour.coordX, neighbour.coordY, age);// age prend la valeur >1

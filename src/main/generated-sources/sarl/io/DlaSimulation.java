@@ -1,11 +1,11 @@
 package io;
 
-import com.google.common.base.Objects;
 import gui.EnvironmentUi;
 import io.GuiRepaint;
-import io.Particle;
 import io.ParticleAgent;
+import io.ParticleBody;
 import io.Population;
+import io.Setting;
 import io.sarl.bootstrap.SRE;
 import io.sarl.bootstrap.SREBootstrap;
 import io.sarl.core.OpenEventSpace;
@@ -19,6 +19,7 @@ import io.sarl.lang.core.EventSpace;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.IntegerRange;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 @SarlSpecification("0.11")
@@ -33,11 +34,11 @@ public class DlaSimulation implements EventListener {
   
   private Population population;
   
-  private ConcurrentHashMap<UUID, Particle> group;
+  private ConcurrentHashMap<UUID, ParticleBody> group;
   
   private OpenEventSpace space;
   
-  private final Particle dimensions;
+  private final ParticleBody dimensions;
   
   private EnvironmentUi myGUI;
   
@@ -45,8 +46,8 @@ public class DlaSimulation implements EventListener {
     final int scale = 2;
     final int width = (scale * 320);
     final int height = (scale * 234);
-    Particle _particle = new Particle(width, height);
-    this.dimensions = _particle;
+    ParticleBody _particleBody = new ParticleBody(width, height);
+    this.dimensions = _particleBody;
     Population _population = new Population(this.dimensions);
     this.population = _population;
   }
@@ -57,18 +58,29 @@ public class DlaSimulation implements EventListener {
       this.defaultSARLContext = this.kernel.startWithoutAgent();
       EventSpace _defaultSpace = this.defaultSARLContext.getDefaultSpace();
       this.space = ((OpenEventSpace) _defaultSpace);
-      ConcurrentHashMap<UUID, Particle> _concurrentHashMap = new ConcurrentHashMap<UUID, Particle>();
+      ConcurrentHashMap<UUID, ParticleBody> _concurrentHashMap = new ConcurrentHashMap<UUID, ParticleBody>();
       this.group = _concurrentHashMap;
-      EnvironmentUi _environmentUi = new EnvironmentUi(this.dimensions, this.space, this.population);
-      this.myGUI = _environmentUi;
-      for (final Particle p : this.population.particles) {
+      ParticleBody centre = new ParticleBody((this.dimensions.coordX / 2), (this.dimensions.coordY / 2));
+      centre.mouvement = false;
+      centre.PARTICLE_COLOR = Setting.AMA_FIRST_COLOR;
+      this.group.put(UUID.randomUUID(), centre);
+      IntegerRange _upTo = new IntegerRange(1, Setting.NUMBER_OF_PARTICLES);
+      for (final Integer i : _upTo) {
         {
+          double _random = Math.random();
+          final int coordX = ((int) (_random * this.dimensions.coordX));
+          double _random_1 = Math.random();
+          final int coordY = ((int) (_random_1 * this.dimensions.coordY));
           final UUID uuid = UUID.randomUUID();
+          ParticleBody p = new ParticleBody(coordX, coordY);
           this.kernel.startAgentWithID(ParticleAgent.class, uuid, p);
           p.owner = uuid;
           this.group.put(uuid, p);
+          System.out.println(("Agent " + i));
         }
       }
+      EnvironmentUi _environmentUi = new EnvironmentUi(this.dimensions, this.space, this.group);
+      this.myGUI = _environmentUi;
       this.space.register(this);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
@@ -78,15 +90,7 @@ public class DlaSimulation implements EventListener {
   @Override
   public void receiveEvent(final Event event) {
     if ((event instanceof GuiRepaint)) {
-      Particle particle = ((GuiRepaint)event).particle;
-      for (final Particle p : this.population.particles) {
-        boolean _equals = Objects.equal(p.owner, particle.owner);
-        if (_equals) {
-          p.coordX = particle.coordX;
-          p.coordY = particle.coordY;
-        }
-      }
-      this.myGUI.population = this.population;
+      this.myGUI.group = this.group;
       this.myGUI.repaint();
     }
   }

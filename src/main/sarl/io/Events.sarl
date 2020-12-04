@@ -3,9 +3,9 @@ package io
 event Die
 
 event GuiRepaint {
-	val particle: Particle
+	val particle: ParticleBody
 
-	new (particule : Particle) {
+	new (particule : ParticleBody) {
 		particle = particule
 	}
 

@@ -1,21 +1,21 @@
 package io.gui
 
+import io.ParticleBody
+import io.Population
+import io.Setting
+import java.awt.Color
+import java.awt.Graphics
 import javax.swing.JComponent
 import java.util.concurrent.ConcurrentHashMap
 import java.util.UUID
-import io.Particle
-import java.awt.Graphics
-import java.awt.Color
-import io.Population
-import io.Setting
 
 class WorldCanvas extends JComponent {
-	public var population: Population
-	public var dimensions : Particle
-	val PARTICLE_COLOR = Color.BLUE
+	public var group : ConcurrentHashMap <UUID, ParticleBody>
+	public var dimensions : ParticleBody
 	
-	new(dim: Particle, population: Population){
-		this.population = population
+	
+	new(dim : ParticleBody, group : ConcurrentHashMap) {
+		this.group = group
 		this.dimensions = dim
 		setSize(this.dimensions.coordX, this.dimensions.coordY)
 	}
@@ -24,15 +24,15 @@ class WorldCanvas extends JComponent {
 		super.paintComponent(g)
 		var width: int = this.dimensions.coordX
 		var height: int = this.dimensions.coordY
-		g.color = Setting::INITIAL_COLOR
+		g.color = Color.BLACK
 		g.fillRect(0, 0, width, height)
-		g.color = Setting::AMA_FIRST_COLOR
 
-		for (e : population.particles) {
-			g.drawLine(e.coordX, e.coordY, e.coordX, e.coordY)
+		for (particle : group.values) {
+			g.color = particle.PARTICLE_COLOR
+			g.drawLine(particle.coordX, particle.coordY, particle.coordX, particle.coordY)
 		}
 		
-		for (i : 1 .. this.dimensions.coordX)
+		/*for (i : 1 .. this.dimensions.coordX)
 		{
 			for(j: 1 .. this.dimensions.coordY){
 				val age: int = this.population.getAgeForPixel(i, j)
@@ -47,7 +47,7 @@ class WorldCanvas extends JComponent {
 					g.drawLine(i, j, i, j)
 				}
 			}			
-		}
+		}*/
 	}
 	
 	def update(g: Graphics){

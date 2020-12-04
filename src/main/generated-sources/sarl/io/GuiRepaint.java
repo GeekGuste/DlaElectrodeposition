@@ -1,6 +1,6 @@
 package io;
 
-import io.Particle;
+import io.ParticleBody;
 import io.sarl.lang.annotation.SarlElementType;
 import io.sarl.lang.annotation.SarlSpecification;
 import io.sarl.lang.annotation.SyntheticMember;
@@ -12,9 +12,9 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 @SarlElementType(15)
 @SuppressWarnings("all")
 public class GuiRepaint extends Event {
-  public final Particle particle;
+  public final ParticleBody particle;
   
-  public GuiRepaint(final Particle particule) {
+  public GuiRepaint(final ParticleBody particule) {
     this.particle = particule;
   }
   
@@ -44,5 +44,5 @@ public class GuiRepaint extends Event {
   }
   
   @SyntheticMember
-  private static final long serialVersionUID = -17657109L;
+  private static final long serialVersionUID = 680225579L;
 }
