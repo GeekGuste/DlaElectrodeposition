@@ -9,7 +9,7 @@ import java.awt.Color;
 @SarlElementType(10)
 @SuppressWarnings("all")
 public class Setting {
-  public static final String TITLE = "Diffused Limited Aggregation(Electrodéposition)";
+  public static final String TITLE = "Diffused Limited Aggregation(ElectrodÃ©position)";
   
   public static final Color INITIAL_COLOR = Color.BLUE;
   
